@@ -3,8 +3,8 @@ import CategoryCard, { Category } from "@/components/CategoryCard";
 import Link from "next/link";
 import { unstable_cache } from "next/cache";
 
-// Revalidate every 60 seconds instead of force-dynamic
-export const revalidate = 60;
+// Force dynamic rendering (prevents SSG database errors on Vercel)
+export const dynamic = 'force-dynamic';
 
 // Cache the categories query
 const getCategories = unstable_cache(

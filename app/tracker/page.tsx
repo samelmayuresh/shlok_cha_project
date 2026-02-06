@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import DietPlanCard from '@/components/DietPlanCard';
+import DietPlanDisplay from '@/components/DietPlanDisplay';
 
 interface ActivePlan {
     goal: string;
@@ -329,7 +329,7 @@ export default function TrackerPage() {
                                     </button>
                                 </div>
                                 <div className="max-h-96 overflow-y-auto">
-                                    <DietPlanCard content={activePlan.planContent} />
+                                    <DietPlanDisplay content={activePlan.planContent} />
                                 </div>
                             </div>
                         )}

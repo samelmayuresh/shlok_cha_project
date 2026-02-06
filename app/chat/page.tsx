@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { DietPlanInline } from '@/components/DietPlanCard';
+import { DietPlanInline } from '@/components/DietPlanDisplay';
 
 interface Message {
     role: 'user' | 'assistant';

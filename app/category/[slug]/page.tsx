@@ -4,8 +4,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { unstable_cache } from "next/cache";
 
-// Revalidate every 60 seconds
-export const revalidate = 60;
+// Force dynamic rendering (prevents SSG database errors on Vercel)
+export const dynamic = 'force-dynamic';
 
 // Cached query for category with diet plans
 const getCategoryBySlug = unstable_cache(
