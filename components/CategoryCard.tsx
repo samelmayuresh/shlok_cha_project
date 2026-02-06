@@ -76,7 +76,7 @@ export default function CategoryCard({ category }: CategoryCardProps) {
                 <div className="flex justify-between items-start z-10">
                     <div className="bg-retro-paper border-2 border-retro-border p-2 shadow-retro-sm">
                         {iconPath ? (
-                            <Image
+                            <img
                                 src={iconPath}
                                 alt={`${category.name} icon`}
                                 width={48}
