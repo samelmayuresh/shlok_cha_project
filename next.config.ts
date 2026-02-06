@@ -11,9 +11,15 @@ const nextConfig: NextConfig = {
         formats: ['image/avif', 'image/webp'],
     },
 
-    // Experimental optimizations
+    // Experimental optimizations (removed @prisma/client to prevent engine tree-shaking)
     experimental: {
-        optimizePackageImports: ["@prisma/client", "openai"],
+        optimizePackageImports: ["openai"],
+    },
+
+    // Ensure Prisma engine files are included in serverless bundle
+    outputFileTracingIncludes: {
+        '/api/*': ['./node_modules/.prisma/**/*'],
+        '/': ['./node_modules/.prisma/**/*'],
     },
 
     // Ignore ESLint during builds (for Vercel deployment)
