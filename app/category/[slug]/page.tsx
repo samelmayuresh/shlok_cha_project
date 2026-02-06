@@ -40,7 +40,7 @@ const getCategoryBySlug = unstable_cache(
             },
         });
     },
-    ['category-detail'],
+    ['category-detail-v3'],
     { revalidate: 60, tags: ['categories', 'diet-plans'] }
 );
 
