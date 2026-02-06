@@ -56,6 +56,7 @@ model DietPlan {
   restrictions String[]
   imageUrl    String?
   isAIGenerated Boolean @default(false)
+  dietType    String   @default("non-vegetarian") // vegetarian, vegan, non-vegetarian
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   

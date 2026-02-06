@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import DietPlanCard from "@/components/DietPlanCard";
+import DietPlanGrid from "@/components/DietPlanGrid";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { unstable_cache } from "next/cache";
@@ -31,6 +32,8 @@ const getCategoryBySlug = unstable_cache(
                         carbs: true,
                         fats: true,
                         benefits: true,
+                        dietType: true,
+                        categoryId: true,
                     },
                     orderBy: { createdAt: 'desc' },
                 },
@@ -86,26 +89,8 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                 </div>
             </div>
 
-            {/* Plan Grid */}
-            <div className="mb-4 flex items-center gap-2">
-                <span className="bg-black text-white px-2 font-mono text-xs">DIR_LISTING</span>
-                <span className="h-0.5 bg-black dark:bg-white/50 flex-1"></span>
-                <span className="font-mono text-xs text-retro-text">{category.dietPlans.length} ITEMS</span>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {category.dietPlans.map((plan) => (
-                    <div key={plan.id} className="h-full">
-                        <DietPlanCard plan={plan} />
-                    </div>
-                ))}
-            </div>
-
-            {category.dietPlans.length === 0 && (
-                <div className="border-2 border-dashed border-black dark:border-white/50 p-8 text-center font-mono text-retro-text">
-                    NO_DATA_FOUND in this directory.
-                </div>
-            )}
+            {/* Plan Grid with Filters */}
+            <DietPlanGrid plans={category.dietPlans as any} />
         </div>
     );
 }
