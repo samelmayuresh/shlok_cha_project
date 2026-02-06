@@ -3,258 +3,64 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 const categories = [
-    {
-        name: 'Medical',
-        slug: 'medical',
-        description: 'Diet plans designed for specific medical conditions and health requirements',
-        icon: '🏥',
-        color: '#4CAF50',
-    },
-    {
-        name: 'Fitness',
-        slug: 'fitness',
-        description: 'Optimized nutrition plans for workout performance and muscle building',
-        icon: '💪',
-        color: '#2196F3',
-    },
-    {
-        name: 'Skin & Looks',
-        slug: 'skin-looks',
-        description: 'Beauty-focused diets for glowing skin and healthy appearance',
-        icon: '✨',
-        color: '#E91E63',
-    },
-    {
-        name: 'Athletic',
-        slug: 'athletic',
-        description: 'High-performance nutrition for athletes and sports enthusiasts',
-        icon: '🏃',
-        color: '#FF9800',
-    },
+    { name: 'Medical', slug: 'medical', description: 'Diet plans designed for specific medical conditions and health requirements', icon: '🏥', color: '#4CAF50' },
+    { name: 'Fitness', slug: 'fitness', description: 'Optimized nutrition plans for workout performance and muscle building', icon: '💪', color: '#2196F3' },
+    { name: 'Skin & Looks', slug: 'skin-looks', description: 'Beauty-focused diets for glowing skin and healthy appearance', icon: '✨', color: '#E91E63' },
+    { name: 'Athletic', slug: 'athletic', description: 'High-performance nutrition for athletes and sports enthusiasts', icon: '🏃', color: '#FF9800' },
 ];
 
 const dietPlans = [
-    // ==========================================
-    // SKIN & LOOKS
-    // ==========================================
-    {
-        categorySlug: 'skin-looks',
-        title: 'Glowing Skin Detox (Vegetarian)',
-        description: 'Antioxidant-rich vegetarian plan for radiant complexion.',
-        duration: '21 days',
-        difficulty: 'Beginner',
-        calories: 1600,
-        protein: 60,
-        carbs: 200,
-        fats: 50,
-        dietType: 'vegetarian',
-        benefits: ['Luminous skin', 'Reduced inflammation', 'Better digestion'],
-        restrictions: ['No meat', 'Low dairy', 'No refined sugar'],
-        meals: [
-            { time: 'Breakfast', items: ['Papaya bowl with lime', 'Green tea', 'Walnuts'], calories: 300 },
-            { time: 'Lunch', items: ['Spinach & strawberry salad', 'Feta cheese', 'Balsamic dressing'], calories: 450 },
-            { time: 'Dinner', items: ['Stuffed bell peppers (quinoa)', 'Roasted carrots'], calories: 500 },
-            { time: 'Snack', items: ['Cucumber water', 'Almonds'], calories: 150 },
-        ],
-    },
-    {
-        categorySlug: 'skin-looks',
-        title: 'Collagen Booster (Non-Veg)',
-        description: 'Rich in collagen-boosting nutrients for firm, youthful skin.',
-        duration: '30 days',
-        difficulty: 'Intermediate',
-        calories: 1800,
-        protein: 100,
-        carbs: 150,
-        fats: 70,
-        dietType: 'non-vegetarian',
-        benefits: ['Reduced wrinkles', 'Firmer skin', 'Joint health'],
-        restrictions: ['No processed meats', 'Low sugar'],
-        meals: [
-            { time: 'Breakfast', items: ['Bone broth', 'Poached eggs', 'Avocado toast'], calories: 450 },
-            { time: 'Lunch', items: ['Sardine salad', 'Olive oil', 'Greens'], calories: 550 },
-            { time: 'Dinner', items: ['Slow-cooked beef stew (bone-in)', 'Sweet potato'], calories: 600 },
-            { time: 'Snack', items: ['Citrus fruits (Vitamin C)', 'Pumpkin seeds'], calories: 200 },
-        ],
-    },
-    {
-        categorySlug: 'skin-looks',
-        title: 'Plant-Based Radiance (Vegan)',
-        description: '100% plant-based diet focused on hydration and skin clarity.',
-        duration: '14 days',
-        difficulty: 'Beginner',
-        calories: 1500,
-        protein: 50,
-        carbs: 220,
-        fats: 40,
-        dietType: 'vegan',
-        benefits: ['Clear complexion', 'Detoxification', 'Hydration'],
-        restrictions: ['Vegan', 'No oil', 'Whole foods only'],
-        meals: [
-            { time: 'Breakfast', items: ['Glowing Green Smoothie (Spinach, Apple, Lemon)', 'Chia pudding'], calories: 350 },
-            { time: 'Lunch', items: ['Buddha bowl (Chickpeas, Kale, Tahini)', 'Brown rice'], calories: 500 },
-            { time: 'Dinner', items: ['Lentil soup', 'Steamed broccoli'], calories: 450 },
-            { time: 'Snack', items: ['Watermelon', 'Brazil nuts'], calories: 200 },
-        ],
-    },
+    // ==================== MEDICAL (10 plans) ====================
+    { categorySlug: 'medical', title: 'Heart Healthy Mediterranean', description: 'Gold standard for cardiovascular health with olive oil and fish.', duration: 'Ongoing', difficulty: 'Easy', calories: 2000, protein: 90, carbs: 250, fats: 70, dietType: 'non-vegetarian', benefits: ['Heart health', 'Longevity', 'Brain function'], restrictions: ['Low red meat', 'High olive oil'], meals: [{ time: 'Breakfast', items: ['Greek Yogurt', 'Berries', 'Walnuts'], calories: 400 }] },
+    { categorySlug: 'medical', title: 'Type 2 Diabetes Control', description: 'Vegetarian plan to manage stable blood sugar levels.', duration: 'Ongoing', difficulty: 'Intermediate', calories: 1800, protein: 80, carbs: 180, fats: 70, dietType: 'vegetarian', benefits: ['Sugar control', 'Weight loss', 'Energy stability'], restrictions: ['Low GI', 'No refined sugar'], meals: [{ time: 'Breakfast', items: ['Steel cut oats', 'Cinnamon', 'Almonds'], calories: 400 }] },
+    { categorySlug: 'medical', title: 'DASH Diet for Hypertension', description: 'Clinically proven diet to lower blood pressure naturally.', duration: '30 days', difficulty: 'Beginner', calories: 1900, protein: 85, carbs: 240, fats: 60, dietType: 'vegetarian', benefits: ['Lower BP', 'Heart health', 'Weight management'], restrictions: ['Low sodium', 'High potassium'], meals: [{ time: 'Breakfast', items: ['Whole grain cereal', 'Banana', 'Skim milk'], calories: 350 }] },
+    { categorySlug: 'medical', title: 'Anti-Inflammatory Protocol', description: 'Reduce chronic inflammation with omega-3 rich foods.', duration: '60 days', difficulty: 'Intermediate', calories: 1850, protein: 95, carbs: 200, fats: 75, dietType: 'non-vegetarian', benefits: ['Reduced pain', 'Joint health', 'Better immunity'], restrictions: ['No processed foods', 'No sugar'], meals: [{ time: 'Lunch', items: ['Wild salmon', 'Turmeric rice', 'Leafy greens'], calories: 600 }] },
+    { categorySlug: 'medical', title: 'Kidney-Friendly Low Sodium', description: 'Carefully balanced for chronic kidney disease management.', duration: 'Ongoing', difficulty: 'Advanced', calories: 1700, protein: 50, carbs: 220, fats: 65, dietType: 'vegetarian', benefits: ['Kidney protection', 'Electrolyte balance'], restrictions: ['Low protein', 'Low potassium', 'Low phosphorus'], meals: [{ time: 'Dinner', items: ['White rice', 'Steamed cabbage', 'Applesauce'], calories: 450 }] },
+    { categorySlug: 'medical', title: 'GERD Relief Diet', description: 'Soothe acid reflux with gentle, non-irritating foods.', duration: '21 days', difficulty: 'Easy', calories: 1800, protein: 75, carbs: 230, fats: 60, dietType: 'vegetarian', benefits: ['Reduced reflux', 'Better sleep', 'Less bloating'], restrictions: ['No spicy', 'No citrus', 'No caffeine'], meals: [{ time: 'Dinner', items: ['Baked chicken', 'Mashed potato', 'Green beans'], calories: 500 }] },
+    { categorySlug: 'medical', title: 'Thyroid Support Plan', description: 'Iodine and selenium rich foods for thyroid health.', duration: '45 days', difficulty: 'Intermediate', calories: 1900, protein: 90, carbs: 210, fats: 70, dietType: 'non-vegetarian', benefits: ['Hormone balance', 'Energy boost', 'Metabolism support'], restrictions: ['Limit goitrogens', 'No soy'], meals: [{ time: 'Lunch', items: ['Seaweed salad', 'Grilled fish', 'Brown rice'], calories: 550 }] },
+    { categorySlug: 'medical', title: 'Cholesterol Lowering Plan', description: 'Plant sterols and fiber to reduce LDL cholesterol.', duration: '90 days', difficulty: 'Intermediate', calories: 1800, protein: 70, carbs: 250, fats: 50, dietType: 'vegan', benefits: ['Lower LDL', 'Heart health', 'Weight loss'], restrictions: ['No saturated fat', 'High fiber'], meals: [{ time: 'Breakfast', items: ['Oatmeal with flax', 'Orange juice', 'Almonds'], calories: 400 }] },
+    { categorySlug: 'medical', title: 'IBS Gentle Diet', description: 'Low FODMAP approach for irritable bowel syndrome.', duration: '28 days', difficulty: 'Advanced', calories: 1700, protein: 75, carbs: 200, fats: 60, dietType: 'vegetarian', benefits: ['Less bloating', 'Regular digestion', 'Comfort'], restrictions: ['Low FODMAP', 'No lactose', 'No garlic/onion'], meals: [{ time: 'Lunch', items: ['Grilled chicken', 'Rice noodles', 'Carrots'], calories: 500 }] },
+    { categorySlug: 'medical', title: 'Liver Detox Protocol', description: 'Support liver function with cleansing whole foods.', duration: '14 days', difficulty: 'Easy', calories: 1600, protein: 60, carbs: 220, fats: 45, dietType: 'vegan', benefits: ['Liver support', 'Detoxification', 'Energy'], restrictions: ['No alcohol', 'No processed foods'], meals: [{ time: 'Breakfast', items: ['Lemon water', 'Green smoothie', 'Chia seeds'], calories: 300 }] },
 
-    // ==========================================
-    // FITNESS
-    // ==========================================
-    {
-        categorySlug: 'fitness',
-        title: 'Lean Muscle Builder (Non-Veg)',
-        description: 'Classic high-protein bodybuilding diet for muscle growth.',
-        duration: '12 weeks',
-        difficulty: 'Intermediate',
-        calories: 2500,
-        protein: 200,
-        carbs: 250,
-        fats: 70,
-        dietType: 'non-vegetarian',
-        benefits: ['Muscle hypertrophy', 'Strength', 'Recovery'],
-        restrictions: ['No alcohol', 'Track macros strict'],
-        meals: [
-            { time: 'Breakfast', items: ['6 Egg whites + 2 whole eggs', 'Oats', 'Blueberries'], calories: 550 },
-            { time: 'Lunch', items: ['Grilled Chicken Breast', 'White Rice', 'Broccoli'], calories: 700 },
-            { time: 'Pre-Workout', items: ['Whey Protein', 'Rice cake'], calories: 250 },
-            { time: 'Dinner', items: ['Lean Steak', 'Sweet Potato', 'Asparagus'], calories: 750 },
-        ],
-    },
-    {
-        categorySlug: 'fitness',
-        title: 'Vegetarian Strength Gains',
-        description: 'Build muscle without meat using dairy and plant proteins.',
-        duration: '8 weeks',
-        difficulty: 'Intermediate',
-        calories: 2300,
-        protein: 160,
-        carbs: 280,
-        fats: 70,
-        dietType: 'vegetarian',
-        benefits: ['Muscle growth', 'Ethical gains', 'Digestive health'],
-        restrictions: ['Vegetarian', 'High dairy'],
-        meals: [
-            { time: 'Breakfast', items: ['Greek Yogurt Parfait', 'Whey protein', 'Granola'], calories: 500 },
-            { time: 'Lunch', items: ['Paneer (Cottage Cheese) Curry', 'Quinoa', 'Salad'], calories: 700 },
-            { time: 'Dinner', items: ['Lentil Pasta', 'Mozzarella', 'Marinara Sauce'], calories: 650 },
-            { time: 'Snack', items: ['Hard boiled eggs', 'Apple'], calories: 300 },
-        ],
-    },
-    {
-        categorySlug: 'fitness',
-        title: 'Vegan Powerlifting',
-        description: 'High-calorie plant-based diet for heavy lifting.',
-        duration: '10 weeks',
-        difficulty: 'Advanced',
-        calories: 2800,
-        protein: 150,
-        carbs: 350,
-        fats: 90,
-        dietType: 'vegan',
-        benefits: ['Strength', 'Recovery', 'Low inflammation'],
-        restrictions: ['Vegan', 'High volume eating'],
-        meals: [
-            { time: 'Breakfast', items: ['Tofu Scramble', 'Avocado toast (2)', 'Soy milk'], calories: 700 },
-            { time: 'Lunch', items: ['Seitan Stir-fry', 'Brown Rice', 'Peanut sauce'], calories: 800 },
-            { time: 'Dinner', items: ['Black bean burgers', 'Sweet potato fries (baked)', 'Kale salad'], calories: 800 },
-            { time: 'Snack', items: ['Pea protein shake', 'Banana'], calories: 400 },
-        ],
-    },
+    // ==================== FITNESS (10 plans) ====================
+    { categorySlug: 'fitness', title: 'Lean Muscle Builder', description: 'Classic high-protein bodybuilding diet for muscle growth.', duration: '12 weeks', difficulty: 'Intermediate', calories: 2500, protein: 200, carbs: 250, fats: 70, dietType: 'non-vegetarian', benefits: ['Muscle hypertrophy', 'Strength', 'Recovery'], restrictions: ['No alcohol', 'Track macros'], meals: [{ time: 'Breakfast', items: ['6 Egg whites', 'Oats', 'Banana'], calories: 550 }] },
+    { categorySlug: 'fitness', title: 'Vegetarian Strength Gains', description: 'Build muscle without meat using dairy and plant proteins.', duration: '8 weeks', difficulty: 'Intermediate', calories: 2300, protein: 160, carbs: 280, fats: 70, dietType: 'vegetarian', benefits: ['Muscle growth', 'Ethical gains'], restrictions: ['Vegetarian', 'High dairy'], meals: [{ time: 'Lunch', items: ['Paneer curry', 'Quinoa', 'Salad'], calories: 700 }] },
+    { categorySlug: 'fitness', title: 'Vegan Powerlifting', description: 'High-calorie plant-based diet for heavy lifting.', duration: '10 weeks', difficulty: 'Advanced', calories: 2800, protein: 150, carbs: 350, fats: 90, dietType: 'vegan', benefits: ['Strength', 'Recovery', 'Low inflammation'], restrictions: ['Vegan', 'High volume eating'], meals: [{ time: 'Dinner', items: ['Seitan stir-fry', 'Brown rice', 'Peanut sauce'], calories: 800 }] },
+    { categorySlug: 'fitness', title: 'Shredding Cut Phase', description: 'Caloric deficit with high protein to preserve muscle.', duration: '8 weeks', difficulty: 'Advanced', calories: 1800, protein: 180, carbs: 150, fats: 50, dietType: 'non-vegetarian', benefits: ['Fat loss', 'Muscle retention', 'Definition'], restrictions: ['Calorie deficit', 'No sugar'], meals: [{ time: 'Lunch', items: ['Grilled chicken', 'Broccoli', 'Small rice portion'], calories: 450 }] },
+    { categorySlug: 'fitness', title: 'Beginners Fitness Start', description: 'Perfect for those new to gym and healthy eating.', duration: '6 weeks', difficulty: 'Beginner', calories: 2000, protein: 120, carbs: 250, fats: 60, dietType: 'non-vegetarian', benefits: ['Energy', 'Basic strength', 'Healthy habits'], restrictions: ['Balanced macros', 'Whole foods'], meals: [{ time: 'Breakfast', items: ['Eggs', 'Toast', 'Orange juice'], calories: 450 }] },
+    { categorySlug: 'fitness', title: 'Keto Shred', description: 'Ultra-low carb ketogenic diet for rapid fat loss.', duration: '6 weeks', difficulty: 'Advanced', calories: 1900, protein: 140, carbs: 30, fats: 140, dietType: 'non-vegetarian', benefits: ['Rapid fat loss', 'Mental clarity', 'Appetite control'], restrictions: ['Under 50g carbs', 'High fat'], meals: [{ time: 'Dinner', items: ['Steak', 'Avocado', 'Spinach salad'], calories: 700 }] },
+    { categorySlug: 'fitness', title: 'Lean Bulk Protocol', description: 'Slow caloric surplus for clean muscle gains.', duration: '16 weeks', difficulty: 'Intermediate', calories: 2700, protein: 180, carbs: 320, fats: 80, dietType: 'non-vegetarian', benefits: ['Muscle gain', 'Minimal fat', 'Strength'], restrictions: ['Clean foods only', '+300 surplus'], meals: [{ time: 'Post-workout', items: ['Whey shake', 'Banana', 'Oats'], calories: 500 }] },
+    { categorySlug: 'fitness', title: 'High Protein Vegetarian', description: 'Maximize protein intake without meat sources.', duration: '8 weeks', difficulty: 'Intermediate', calories: 2200, protein: 150, carbs: 250, fats: 65, dietType: 'vegetarian', benefits: ['Muscle support', 'Recovery', 'Satiety'], restrictions: ['Vegetarian', 'High protein'], meals: [{ time: 'Lunch', items: ['Greek yogurt bowl', 'Nuts', 'Cottage cheese'], calories: 600 }] },
+    { categorySlug: 'fitness', title: 'CrossFit Performance', description: 'Zone diet approach for functional fitness athletes.', duration: '12 weeks', difficulty: 'Advanced', calories: 2400, protein: 170, carbs: 240, fats: 80, dietType: 'non-vegetarian', benefits: ['Performance', 'Recovery', 'Endurance'], restrictions: ['Zone blocks', 'Timed nutrition'], meals: [{ time: 'Pre-workout', items: ['Chicken breast', 'Sweet potato', 'Veggies'], calories: 500 }] },
+    { categorySlug: 'fitness', title: 'Vegan Muscle Builder', description: 'Complete plant protein sources for bodybuilding.', duration: '12 weeks', difficulty: 'Advanced', calories: 2600, protein: 160, carbs: 300, fats: 85, dietType: 'vegan', benefits: ['Muscle growth', 'Recovery', 'Ethical'], restrictions: ['Vegan', 'Complete proteins'], meals: [{ time: 'Lunch', items: ['Tempeh', 'Quinoa', 'Black beans', 'Vegetables'], calories: 700 }] },
 
-    // ==========================================
-    // ATHLETIC
-    // ==========================================
-    {
-        categorySlug: 'athletic',
-        title: 'Marathon Runner Fuel (Carb Load)',
-        description: 'High-carbohydrate plan for endurance athletes.',
-        duration: '16 weeks',
-        difficulty: 'Advanced',
-        calories: 3000,
-        protein: 120,
-        carbs: 450,
-        fats: 60,
-        dietType: 'non-vegetarian',
-        benefits: ['Endurance', 'Glycogen storage', 'Stamina'],
-        restrictions: ['Timing centered around training'],
-        meals: [
-            { time: 'Breakfast', items: ['Large bowl of oatmeal', 'Honey', 'Banana', 'Toast'], calories: 700 },
-            { time: 'Lunch', items: ['Turkey Sandwich (Web bread)', 'Pasta salad', 'Fruit'], calories: 800 },
-            { time: 'Dinner', items: ['Grilled Chicken', 'Double portion Rice', 'Zucchini'], calories: 900 },
-            { time: 'Intra-Workout', items: ['Energy Gel', 'Sports Drink'], calories: 400 },
-        ],
-    },
-    {
-        categorySlug: 'athletic',
-        title: 'Sprinter Explosive Power (Vegan)',
-        description: 'Plant-based power diet for short-burst athletes.',
-        duration: '8 weeks',
-        difficulty: 'Advanced',
-        calories: 2600,
-        protein: 140,
-        carbs: 300,
-        fats: 80,
-        dietType: 'vegan',
-        benefits: ['Explosive energy', 'Lean physique', 'Recovery'],
-        restrictions: ['Vegan'],
-        meals: [
-            { time: 'Breakfast', items: ['Overnight oats', 'Vegan protein powder', 'Chia seeds'], calories: 600 },
-            { time: 'Lunch', items: ['Tempeh tacos', 'Corn', 'Guacamole'], calories: 750 },
-            { time: 'Dinner', items: ['Lentil & Sweet Potato Curry', 'Rice'], calories: 800 },
-            { time: 'Snack', items: ['Edamame', 'Rice cakes with PB'], calories: 350 },
-        ],
-    },
+    // ==================== SKIN & LOOKS (10 plans) ====================
+    { categorySlug: 'skin-looks', title: 'Glowing Skin Detox', description: 'Antioxidant-rich vegetarian plan for radiant complexion.', duration: '21 days', difficulty: 'Beginner', calories: 1600, protein: 60, carbs: 200, fats: 50, dietType: 'vegetarian', benefits: ['Luminous skin', 'Reduced inflammation'], restrictions: ['No meat', 'Low dairy'], meals: [{ time: 'Breakfast', items: ['Papaya bowl', 'Green tea', 'Walnuts'], calories: 300 }] },
+    { categorySlug: 'skin-looks', title: 'Collagen Booster', description: 'Rich in collagen-boosting nutrients for firm, youthful skin.', duration: '30 days', difficulty: 'Intermediate', calories: 1800, protein: 100, carbs: 150, fats: 70, dietType: 'non-vegetarian', benefits: ['Reduced wrinkles', 'Firmer skin', 'Joint health'], restrictions: ['No processed meats'], meals: [{ time: 'Breakfast', items: ['Bone broth', 'Eggs', 'Avocado toast'], calories: 450 }] },
+    { categorySlug: 'skin-looks', title: 'Plant-Based Radiance', description: '100% plant-based diet focused on hydration and skin clarity.', duration: '14 days', difficulty: 'Beginner', calories: 1500, protein: 50, carbs: 220, fats: 40, dietType: 'vegan', benefits: ['Clear complexion', 'Detoxification'], restrictions: ['Vegan', 'Whole foods only'], meals: [{ time: 'Breakfast', items: ['Green smoothie', 'Chia pudding'], calories: 350 }] },
+    { categorySlug: 'skin-looks', title: 'Acne Fighting Protocol', description: 'Low glycemic foods to reduce breakouts and inflammation.', duration: '28 days', difficulty: 'Intermediate', calories: 1700, protein: 80, carbs: 180, fats: 60, dietType: 'vegetarian', benefits: ['Clearer skin', 'Reduced breakouts', 'Hormonal balance'], restrictions: ['No dairy', 'Low sugar', 'No fried foods'], meals: [{ time: 'Lunch', items: ['Salmon', 'Leafy greens', 'Avocado'], calories: 550 }] },
+    { categorySlug: 'skin-looks', title: 'Anti-Aging Nutrition', description: 'Combat aging from inside out with nutrient-dense foods.', duration: '90 days', difficulty: 'Intermediate', calories: 1850, protein: 80, carbs: 200, fats: 65, dietType: 'non-vegetarian', benefits: ['Reduced wrinkles', 'Skin elasticity'], restrictions: ['No processed foods', 'Low sugar'], meals: [{ time: 'Lunch', items: ['Spinach salad', 'Grilled chicken', 'Sweet potato'], calories: 650 }] },
+    { categorySlug: 'skin-looks', title: 'Hair Growth Formula', description: 'Biotin and protein rich diet for stronger, thicker hair.', duration: '60 days', difficulty: 'Easy', calories: 1800, protein: 90, carbs: 200, fats: 60, dietType: 'non-vegetarian', benefits: ['Hair growth', 'Stronger nails', 'Healthier scalp'], restrictions: ['High biotin', 'Adequate iron'], meals: [{ time: 'Lunch', items: ['Eggs', 'Spinach', 'Sweet potato', 'Salmon'], calories: 600 }] },
+    { categorySlug: 'skin-looks', title: 'Hydration Glow Plan', description: 'Water-rich foods for plump, hydrated skin.', duration: '14 days', difficulty: 'Beginner', calories: 1500, protein: 55, carbs: 210, fats: 40, dietType: 'vegan', benefits: ['Hydrated skin', 'Plumpness', 'Elasticity'], restrictions: ['High water content foods', 'Low sodium'], meals: [{ time: 'Snack', items: ['Watermelon', 'Cucumber', 'Coconut water'], calories: 150 }] },
+    { categorySlug: 'skin-looks', title: 'Vitamin C Boost', description: 'Citrus and berry rich diet for collagen synthesis.', duration: '21 days', difficulty: 'Easy', calories: 1650, protein: 65, carbs: 220, fats: 50, dietType: 'vegetarian', benefits: ['Brighter skin', 'Even tone', 'Antioxidant protection'], restrictions: ['High vitamin C foods'], meals: [{ time: 'Breakfast', items: ['Orange juice', 'Kiwi', 'Strawberry smoothie'], calories: 350 }] },
+    { categorySlug: 'skin-looks', title: 'Omega-3 Skin Repair', description: 'Fatty fish and seeds for skin barrier repair.', duration: '30 days', difficulty: 'Intermediate', calories: 1900, protein: 95, carbs: 180, fats: 80, dietType: 'non-vegetarian', benefits: ['Skin repair', 'Reduced dryness', 'Less irritation'], restrictions: ['High omega-3', 'Low omega-6'], meals: [{ time: 'Dinner', items: ['Mackerel', 'Flax seeds', 'Avocado salad'], calories: 650 }] },
+    { categorySlug: 'skin-looks', title: 'Sugar-Free Glow', description: 'Eliminate sugar for clearer, more youthful skin.', duration: '30 days', difficulty: 'Advanced', calories: 1700, protein: 85, carbs: 150, fats: 70, dietType: 'vegetarian', benefits: ['Less glycation', 'Clearer skin', 'Better energy'], restrictions: ['Zero added sugar', 'No artificial sweeteners'], meals: [{ time: 'Lunch', items: ['Grilled vegetables', 'Quinoa', 'Olive oil dressing'], calories: 500 }] },
 
-    // ==========================================
-    // MEDICAL
-    // ==========================================
-    {
-        categorySlug: 'medical',
-        title: 'Heart Healthy (Mediterranean)',
-        description: 'Gold standard for cardiovascular health.',
-        duration: 'Lifetime',
-        difficulty: 'Easy',
-        calories: 2000,
-        protein: 90,
-        carbs: 250,
-        fats: 70,
-        dietType: 'non-vegetarian',
-        benefits: ['Heart health', 'Longevity', 'Brain function'],
-        restrictions: ['Low warm-blooded meat', 'High olive oil'],
-        meals: [
-            { time: 'Breakfast', items: ['Greek Yogurt', 'Berries', 'Walnuts'], calories: 400 },
-            { time: 'Lunch', items: ['Grilled Salmon', 'Greek Salad', 'Whole grain pita'], calories: 650 },
-            { time: 'Dinner', items: ['Cod', 'Asparagus', 'Couscous'], calories: 550 },
-            { time: 'Snack', items: ['Olives', 'Apple'], calories: 300 },
-        ],
-    },
-    {
-        categorySlug: 'medical',
-        title: 'Type 2 Diabetes Control (Veg)',
-        description: 'Vegetarian plan to manage stable blood sugar.',
-        duration: 'Ongoing',
-        difficulty: 'Intermediate',
-        calories: 1800,
-        protein: 80,
-        carbs: 180,
-        fats: 70,
-        dietType: 'vegetarian',
-        benefits: ['Sugar control', 'Weight loss', 'Energy stability'],
-        restrictions: ['Low GI index', 'No refined sugar'],
-        meals: [
-            { time: 'Breakfast', items: ['Steel cut oats', 'Cinnamon', 'Almonds'], calories: 400 },
-            { time: 'Lunch', items: ['Chana Masala (Chickpeas)', 'Brown Rice'], calories: 550 },
-            { time: 'Dinner', items: ['Tofu & Broccoli Stir-fry', 'Quinoa'], calories: 500 },
-            { time: 'Snack', items: ['Roasted chickpeas', 'Tea'], calories: 250 },
-        ],
-    },
+    // ==================== ATHLETIC (10 plans) ====================
+    { categorySlug: 'athletic', title: 'Marathon Runner Fuel', description: 'High-carbohydrate plan for endurance athletes.', duration: '16 weeks', difficulty: 'Advanced', calories: 3000, protein: 120, carbs: 450, fats: 60, dietType: 'non-vegetarian', benefits: ['Endurance', 'Glycogen storage', 'Stamina'], restrictions: ['Timing centered'], meals: [{ time: 'Breakfast', items: ['Oatmeal', 'Honey', 'Banana', 'Toast'], calories: 700 }] },
+    { categorySlug: 'athletic', title: 'Sprinter Explosive Power', description: 'Plant-based power diet for short-burst athletes.', duration: '8 weeks', difficulty: 'Advanced', calories: 2600, protein: 140, carbs: 300, fats: 80, dietType: 'vegan', benefits: ['Explosive energy', 'Lean physique'], restrictions: ['Vegan'], meals: [{ time: 'Lunch', items: ['Tempeh tacos', 'Corn', 'Guacamole'], calories: 750 }] },
+    { categorySlug: 'athletic', title: 'Swimmer Endurance Plan', description: 'Balanced nutrition for competitive swimmers.', duration: '12 weeks', difficulty: 'Intermediate', calories: 2800, protein: 140, carbs: 380, fats: 75, dietType: 'non-vegetarian', benefits: ['Energy', 'Recovery', 'Lean mass'], restrictions: ['Pre-pool timing'], meals: [{ time: 'Dinner', items: ['Pasta', 'Grilled chicken', 'Vegetables'], calories: 800 }] },
+    { categorySlug: 'athletic', title: 'Cyclist Carb Loading', description: 'Strategic carb cycling for road cyclists.', duration: '10 weeks', difficulty: 'Advanced', calories: 3200, protein: 130, carbs: 480, fats: 70, dietType: 'non-vegetarian', benefits: ['Sustained energy', 'Performance', 'Recovery'], restrictions: ['Carb timing', 'Race day protocol'], meals: [{ time: 'Pre-race', items: ['Rice', 'Pasta', 'Energy gels'], calories: 600 }] },
+    { categorySlug: 'athletic', title: 'MMA Fighter Prep', description: 'Balanced macros with weight management focus.', duration: '8 weeks', difficulty: 'Advanced', calories: 2400, protein: 180, carbs: 250, fats: 70, dietType: 'non-vegetarian', benefits: ['Strength', 'Weight control', 'Recovery'], restrictions: ['Weight class management'], meals: [{ time: 'Lunch', items: ['Lean beef', 'Rice', 'Vegetables'], calories: 650 }] },
+    { categorySlug: 'athletic', title: 'Basketball Performance', description: 'High energy diet for court athletes.', duration: '12 weeks', difficulty: 'Intermediate', calories: 2700, protein: 150, carbs: 350, fats: 70, dietType: 'non-vegetarian', benefits: ['Agility', 'Endurance', 'Jump power'], restrictions: ['Hydration focus'], meals: [{ time: 'Pre-game', items: ['Chicken sandwich', 'Fruit', 'Sports drink'], calories: 600 }] },
+    { categorySlug: 'athletic', title: 'Triathlete Fuel System', description: 'Multi-sport nutrition for iron-distance events.', duration: '20 weeks', difficulty: 'Advanced', calories: 3500, protein: 150, carbs: 500, fats: 90, dietType: 'non-vegetarian', benefits: ['Multi-sport endurance', 'Recovery', 'Adaptation'], restrictions: ['Periodized nutrition'], meals: [{ time: 'During training', items: ['Energy bars', 'Gels', 'Electrolytes'], calories: 400 }] },
+    { categorySlug: 'athletic', title: 'Yoga & Flexibility Diet', description: 'Light, plant-based nutrition for yogis and flexibility athletes.', duration: '8 weeks', difficulty: 'Easy', calories: 1800, protein: 70, carbs: 250, fats: 55, dietType: 'vegan', benefits: ['Flexibility', 'Mindfulness', 'Light energy'], restrictions: ['Light meals', 'No heavy foods before practice'], meals: [{ time: 'Breakfast', items: ['Fruit bowl', 'Nuts', 'Green tea'], calories: 350 }] },
+    { categorySlug: 'athletic', title: 'Rock Climber Strength', description: 'Lean protein and finger strength focused nutrition.', duration: '10 weeks', difficulty: 'Intermediate', calories: 2200, protein: 140, carbs: 250, fats: 65, dietType: 'vegetarian', benefits: ['Grip strength', 'Low body fat', 'Endurance'], restrictions: ['Lean body mass focus'], meals: [{ time: 'Lunch', items: ['Greek yogurt', 'Nuts', 'Protein bar', 'Fruit'], calories: 550 }] },
+    { categorySlug: 'athletic', title: 'Team Sport Recovery', description: 'Post-game recovery nutrition for team athletes.', duration: 'Ongoing', difficulty: 'Beginner', calories: 2500, protein: 130, carbs: 320, fats: 70, dietType: 'non-vegetarian', benefits: ['Fast recovery', 'Muscle repair', 'Ready for next game'], restrictions: ['Post-game timing', 'Anti-inflammatory'], meals: [{ time: 'Post-game', items: ['Chocolate milk', 'Turkey sandwich', 'Banana'], calories: 600 }] },
 ];
 
 async function main() {
     console.log('🌱 Starting database seed...');
-
-    // Clear existing data (in correct order due to foreign keys)
     await prisma.chatMessage.deleteMany();
     await prisma.chatHistory.deleteMany();
     await prisma.userPlan.deleteMany();
@@ -262,48 +68,27 @@ async function main() {
     await prisma.category.deleteMany();
 
     console.log('✨ Creating categories...');
-
     const createdCategories: any = {};
     for (const category of categories) {
-        const created = await prisma.category.create({
-            data: category,
-        });
+        const created = await prisma.category.create({ data: category });
         createdCategories[category.slug] = created;
         console.log(`   ✓ ${category.name}`);
     }
 
     console.log('📋 Creating diet plans...');
-
     for (const plan of dietPlans) {
         const category = createdCategories[plan.categorySlug];
         await prisma.dietPlan.create({
             data: {
-                title: plan.title,
-                description: plan.description,
-                duration: plan.duration,
-                difficulty: plan.difficulty,
-                calories: plan.calories,
-                protein: plan.protein,
-                carbs: plan.carbs,
-                fats: plan.fats,
-                benefits: plan.benefits,
-                restrictions: plan.restrictions,
-                meals: plan.meals,
-                categoryId: category.id,
-                dietType: plan.dietType, // New field
+                title: plan.title, description: plan.description, duration: plan.duration, difficulty: plan.difficulty,
+                calories: plan.calories, protein: plan.protein, carbs: plan.carbs, fats: plan.fats,
+                benefits: plan.benefits, restrictions: plan.restrictions, meals: plan.meals,
+                categoryId: category.id, dietType: plan.dietType,
             },
         });
         console.log(`   ✓ ${plan.title} (${plan.dietType})`);
     }
-
-    console.log('✅ Database seeded successfully!');
+    console.log('✅ Database seeded with 40 diet plans!');
 }
 
-main()
-    .catch((e) => {
-        console.error('❌ Error seeding database:', e);
-        process.exit(1);
-    })
-    .finally(async () => {
-        await prisma.$disconnect();
-    });
+main().catch((e) => { console.error('❌ Error:', e); process.exit(1); }).finally(() => prisma.$disconnect());
