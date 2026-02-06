@@ -1,0 +1,117 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String
+  name          String?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // Relations
+  userPlans     UserPlan[]
+  chatHistories ChatHistory[]
+  
+  @@map("users")
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  slug        String   @unique
+  description String
+  icon        String?
+  color       String?  // Hex color code
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  dietPlans   DietPlan[]
+  
+  @@map("categories")
+}
+
+model DietPlan {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  duration    String   // e.g., "7 days", "1 month"
+  difficulty  String   // e.g., "Beginner", "Intermediate", "Advanced"
+  calories    Int?
+  protein     Int?     // in grams
+  carbs       Int?     // in grams
+  fats        Int?     // in grams
+  meals       Json     // Array of meal objects
+  benefits    String[]
+  restrictions String[]
+  imageUrl    String?
+  isAIGenerated Boolean @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Foreign Keys
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  
+  // Relations
+  userPlans   UserPlan[]
+  
+  @@map("diet_plans")
+}
+
+model UserPlan {
+  id         String   @id @default(cuid())
+  startDate  DateTime @default(now())
+  endDate    DateTime?
+  status     String   @default("active") // active, completed, abandoned
+  notes      String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  
+  // Foreign Keys
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  planId     String
+  plan       DietPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, planId])
+  @@map("user_plans")
+}
+
+model ChatHistory {
+  id        String   @id @default(cuid())
+  title     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Foreign Keys
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Relations
+  messages  ChatMessage[]
+  
+  @@map("chat_histories")
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  role      String   // "user" or "assistant"
+  content   String
+  createdAt DateTime @default(now())
+  
+  // Foreign Keys
+  chatId    String
+  chat      ChatHistory @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  
+  @@map("chat_messages")
+}

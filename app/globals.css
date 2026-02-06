@@ -1,0 +1,136 @@
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --safe-area-inset-top: env(safe-area-inset-top, 0);
+  --safe-area-inset-bottom: env(safe-area-inset-bottom, 0);
+
+  /* Light Mode Palette */
+  --bg-primary: #fdf6e3;
+  --bg-secondary: #ffffff;
+  --text-primary: #1D2B53;
+  --text-secondary: #e6e6e6;
+  --accent-color: #00E436;
+  --border-color: #000000;
+  --shadow-color: #000000;
+
+  /* Category Colors (Light) */
+  --medical-bg: #E8FFF5;
+  --medical-border: #008751;
+  --fitness-bg: #E3F2FD;
+  --fitness-border: #1d2b53;
+  --skin-bg: #FFF0F4;
+  --skin-border: #7E2553;
+  --athletic-bg: #FFF5E6;
+  --athletic-border: #7E2553;
+}
+
+.dark {
+  /* Dark Mode Palette */
+  --bg-primary: #1a1a2e;
+  --bg-secondary: #0f3460;
+  --text-primary: #eaeaea;
+  --text-secondary: #16213e;
+  --accent-color: #e94560;
+  --border-color: #eaeaea;
+  --shadow-color: rgba(255, 255, 255, 0.25);
+
+  /* Category Colors (Dark) */
+  --medical-bg: #1b5e20;
+  --medical-border: #81c784;
+  --fitness-bg: #0d47a1;
+  --fitness-border: #64b5f6;
+  --skin-bg: #880e4f;
+  --skin-border: #f06292;
+  --athletic-bg: #e65100;
+  --athletic-border: #ffb74d;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: "VT323", monospace;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior: none;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 18px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+@layer utilities {
+  .safe-top {
+    padding-top: var(--safe-area-inset-top);
+  }
+
+  .safe-bottom {
+    padding-bottom: var(--safe-area-inset-bottom);
+  }
+
+  .touch-manipulation {
+    touch-action: manipulation;
+  }
+}
+
+/* Retro Scrollbar */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+  border-left: 2px solid var(--border-color);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #29ADFF;
+  border: 2px solid var(--border-color);
+  box-shadow: inset -2px -2px 0px rgba(0, 0, 0, 0.2);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #FF004D;
+}
+
+/* Retro Borders & Boxes */
+.retro-box {
+  border: 2px solid var(--border-color);
+  box-shadow: 4px 4px 0px 0px var(--shadow-color);
+  background-color: var(--bg-secondary);
+}
+
+.retro-btn {
+  border: 2px solid var(--border-color);
+  box-shadow: 2px 2px 0px 0px var(--shadow-color);
+  transition: all 0.1s;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.retro-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0px 0px 0px 0px var(--shadow-color);
+}
+
+.retro-input {
+  border: 2px solid var(--border-color);
+  box-shadow: inset 2px 2px 0px 0px rgba(0, 0, 0, 0.1);
+  font-family: "VT323", monospace;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+/* Global Transition for smooth theme switching */
+*,
+*::before,
+*::after {
+  transition-property: background-color, border-color, color, fill, stroke, box-shadow;
+  transition-duration: 200ms;
+  transition-timing-function: ease-out;
+}
