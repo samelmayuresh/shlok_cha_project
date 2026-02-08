@@ -66,20 +66,31 @@ RULES:
 
         const generatedText = response.choices[0]?.message?.content || '';
 
-        // Parse the JSON from response
+        // Robust JSON extraction
         let result: AnalysisResult;
         try {
-            const jsonMatch = generatedText.match(/\{[\s\S]*\}/);
-            if (jsonMatch) {
-                result = JSON.parse(jsonMatch[0]);
-            } else {
-                throw new Error('No JSON found');
+            let jsonString = generatedText.trim();
+            // Remove markdown code blocks if present
+            if (jsonString.includes('```')) {
+                jsonString = jsonString.replace(/```json\n?|```/g, '').trim();
             }
-        } catch {
+
+            // Find the first '{' and last '}' to extract the JSON object
+            const firstBrace = jsonString.indexOf('{');
+            const lastBrace = jsonString.lastIndexOf('}');
+
+            if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+                jsonString = jsonString.substring(firstBrace, lastBrace + 1);
+                result = JSON.parse(jsonString);
+            } else {
+                throw new Error('No JSON object found in response');
+            }
+        } catch (e) {
+            console.error('JSON Parse Error:', e);
             // Fallback: return as plain message
             result = {
                 type: 'unknown',
-                message: aiResponse,
+                message: generatedText, // Return full text if parsing fails
                 form_fields: []
             };
         }

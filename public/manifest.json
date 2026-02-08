@@ -1,69 +1,21 @@
 {
-    "name": "DietPlan.EXE",
-    "short_name": "DietPlan",
-    "description": "AI-powered personalized diet plans with a retro 8-bit aesthetic",
+    "name": "Diet Plan AI",
+    "short_name": "DietAI",
+    "description": "Personalized AI Diet & Nutrition Planner",
     "start_url": "/",
     "display": "standalone",
-    "background_color": "#fdf6e3",
-    "theme_color": "#FF004D",
-    "orientation": "portrait-primary",
-    "scope": "/",
-    "lang": "en",
-    "categories": [
-        "health",
-        "fitness",
-        "lifestyle",
-        "food"
-    ],
+    "background_color": "#ffffff",
+    "theme_color": "#000000",
     "icons": [
         {
-            "src": "/icon-192.png",
+            "src": "https://api.iconify.design/mdi:food-apple.svg?color=%23000000",
             "sizes": "192x192",
-            "type": "image/png",
-            "purpose": "any maskable"
+            "type": "image/svg+xml"
         },
         {
-            "src": "/icon-512.png",
+            "src": "https://api.iconify.design/mdi:food-apple.svg?color=%23000000",
             "sizes": "512x512",
-            "type": "image/png",
-            "purpose": "any maskable"
+            "type": "image/svg+xml"
         }
-    ],
-    "screenshots": [
-        {
-            "src": "/screenshot-1.png",
-            "sizes": "750x1334",
-            "type": "image/png",
-            "form_factor": "narrow",
-            "label": "Home Screen"
-        }
-    ],
-    "shortcuts": [
-        {
-            "name": "Chat with AI",
-            "short_name": "AI Chat",
-            "description": "Get personalized diet recommendations",
-            "url": "/chat",
-            "icons": [
-                {
-                    "src": "/icon-192.png",
-                    "sizes": "192x192"
-                }
-            ]
-        },
-        {
-            "name": "Browse Plans",
-            "short_name": "Plans",
-            "description": "Explore diet plan categories",
-            "url": "/categories",
-            "icons": [
-                {
-                    "src": "/icon-192.png",
-                    "sizes": "192x192"
-                }
-            ]
-        }
-    ],
-    "related_applications": [],
-    "prefer_related_applications": false
+    ]
 }

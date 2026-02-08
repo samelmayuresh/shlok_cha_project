@@ -4,8 +4,19 @@ import MobileNav from "@/components/MobileNav";
 import Header from "@/components/Header";
 import FloatingChatButton from "@/components/FloatingChatButton";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { Providers } from "@/components/Providers";
+
+import { VT323 } from 'next/font/google';
+
+const vt323 = VT323({
+    weight: '400',
+    subsets: ['latin'],
+    variable: '--font-vt323',
+    display: 'swap',
+});
 
 export const metadata: Metadata = {
+    // ... existing metadata ...
     title: {
         default: "DietPlan.EXE - AI-Powered Retro Nutrition",
         template: "%s | DietPlan.EXE",
@@ -95,35 +106,24 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en" suppressHydrationWarning>
-            <head>
-                {/* Preload critical fonts */}
-                <link
-                    rel="preconnect"
-                    href="https://fonts.googleapis.com"
-                    crossOrigin="anonymous"
-                />
-                <link
-                    rel="preconnect"
-                    href="https://fonts.gstatic.com"
-                    crossOrigin="anonymous"
-                />
-            </head>
-            <body className="pb-24 safe-bottom bg-[var(--bg-primary)] text-[var(--text-primary)] transition-colors duration-300">
+        <html lang="en" suppressHydrationWarning className={vt323.variable}>
+            <body className="pb-24 safe-bottom bg-[var(--bg-primary)] text-[var(--text-primary)] transition-colors duration-300 font-retro">
                 <ThemeProvider>
-                    <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-retro-primary text-white px-4 py-2 z-[100]">
-                        Skip to main content
-                    </a>
-                    <div className="min-h-screen border-x-4 border-black dark:border-white/20 max-w-lg mx-auto bg-[var(--bg-primary)] shadow-retro-lg transition-colors duration-300">
-                        <Header />
-                        <main id="main-content" role="main">
-                            {children}
-                        </main>
-                    </div>
-                    <FloatingChatButton />
-                    <div className="fixed bottom-0 left-0 right-0 z-50 max-w-lg mx-auto">
-                        <MobileNav />
-                    </div>
+                    <Providers>
+                        <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-retro-primary text-white px-4 py-2 z-[100]">
+                            Skip to main content
+                        </a>
+                        <div className="min-h-screen border-x-4 border-black dark:border-white/20 max-w-lg mx-auto bg-[var(--bg-primary)] shadow-retro-lg transition-colors duration-300">
+                            <Header />
+                            <main id="main-content" role="main">
+                                {children}
+                            </main>
+                        </div>
+                        <FloatingChatButton />
+                        <div className="fixed bottom-0 left-0 right-0 z-50 max-w-lg mx-auto">
+                            <MobileNav />
+                        </div>
+                    </Providers>
                 </ThemeProvider>
             </body>
         </html>

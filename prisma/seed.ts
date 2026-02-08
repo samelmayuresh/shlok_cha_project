@@ -93,6 +93,18 @@ async function main() {
     await prisma.userPlan.deleteMany();
     await prisma.dietPlan.deleteMany();
     await prisma.category.deleteMany();
+    await prisma.user.deleteMany(); // Clear users ensuring we don't have duplicates for the default email
+
+    console.log('👤 Creating default user...');
+    const defaultUser = await prisma.user.create({
+        data: {
+            email: 'guest@dietai.com',
+            password: 'guest_password_mode', // In secure app, this would be hashed
+            name: 'Guest User',
+            image: 'https://api.iconify.design/mdi:account-circle.svg?color=%23000000',
+        }
+    });
+    console.log(`   ✓ User created: ${defaultUser.email} (${defaultUser.id})`);
 
     console.log('✨ Creating categories...');
     const cats: any = {};

@@ -8,9 +8,10 @@ export default function MobileNav() {
 
     const navItems = [
         { name: 'HOME', path: '/', icon: '🏠', ariaLabel: 'Go to home page' },
-        { name: 'LIST', path: '/categories', icon: '📁', ariaLabel: 'Browse diet plan categories' },
-        { name: 'TRACKER', path: '/tracker', icon: '�', ariaLabel: 'Track your progress' },
-        { name: 'USER', path: '/profile', icon: '👤', ariaLabel: 'View your profile' },
+        { name: 'RECIPES', path: '/recipes', icon: '🍳', ariaLabel: 'Find healthy recipes' },
+        { name: 'TRACKER', path: '/tracker', icon: '📊', ariaLabel: 'Track your progress' },
+        { name: 'SHOP', path: '/shopping', icon: '🛒', ariaLabel: 'Shopping list' },
+        { name: 'GAME', path: '/game', icon: '🎮', ariaLabel: 'Play mini game' },
     ];
 
     return (

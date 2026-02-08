@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import ShoppingList from "@/components/ShoppingList";
 import { unstable_cache } from "next/cache";
 
 // Revalidate every 60 seconds
@@ -126,6 +127,9 @@ export default async function PlanPage({ params }: { params: Promise<{ id: strin
                         ))}
                     </div>
                 </div>
+
+                {/* Shopping List */}
+                <ShoppingList meals={plan.meals as any[]} planTitle={plan.title} />
 
                 {/* CTA */}
                 <div className="mt-8 pt-4 border-t-4 border-black dark:border-white/30 text-center">

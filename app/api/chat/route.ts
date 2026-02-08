@@ -1,13 +1,17 @@
 import { OpenAI } from 'openai';
 import { z } from 'zod';
+import { prisma } from '@/lib/prisma';
+import { getServerSession } from "next-auth";
+import { authOptions } from "../auth/[...nextauth]/route";
 
 // Input validation schema
 const ChatRequestSchema = z.object({
     messages: z.array(z.object({
-        role: z.enum(['user', 'assistant']),
-        content: z.string().min(1).max(4000),
-    })).min(1).max(50),
+        role: z.enum(['user', 'assistant', 'system']),
+        content: z.string(),
+    })),
     enableSearch: z.boolean().optional(),
+    chatId: z.string().nullish(),
 });
 
 // Rate limiting headers
@@ -75,6 +79,19 @@ function extractSearchQuery(messages: Array<{ role: string; content: string }>):
 
 export async function POST(req: Request) {
     try {
+        const session = await getServerSession(authOptions);
+        if (!session?.user?.email) {
+            return new Response('Unauthorized', { status: 401 });
+        }
+
+        const user = await prisma.user.findUnique({
+            where: { email: session.user.email }
+        });
+
+        if (!user) {
+            return new Response('User not found', { status: 404 });
+        }
+
         // Parse and validate input
         const body = await req.json();
         const validationResult = ChatRequestSchema.safeParse(body);
@@ -95,9 +112,62 @@ export async function POST(req: Request) {
             );
         }
 
-        const { messages, enableSearch = true } = validationResult.data;
+        const { messages, enableSearch = true, chatId } = validationResult.data;
 
-        // Perform web search if enabled
+        // Create or retrieve chat history
+        let historyId = chatId;
+
+        // Logic to create/retrieve history
+        if (!historyId) {
+            const lastUserMsg = messages[messages.length - 1];
+            // Create title from first message (truncated)
+            const title = lastUserMsg.content.slice(0, 50) + (lastUserMsg.content.length > 50 ? '...' : '');
+
+            const newHistory = await prisma.chatHistory.create({
+                data: {
+                    userId: user.id,
+                    title: title,
+                }
+            });
+            historyId = newHistory.id;
+        } else {
+            // Verify ownership
+            const history = await prisma.chatHistory.findUnique({
+                where: { id: historyId }
+            });
+
+            if (!history || history.userId !== user.id) {
+                // If not found or not owned, deny or create new. 
+                // For now, let's treat invalid ID as "create new" to be resilient, 
+                // or error out. Erroring is safer.
+                // return new Response('Chat not found', { status: 404 });
+
+                // Resilient approach: Create new
+                const lastUserMsg = messages[messages.length - 1];
+                const title = lastUserMsg.content.slice(0, 50) + (lastUserMsg.content.length > 50 ? '...' : '');
+                const newHistory = await prisma.chatHistory.create({
+                    data: {
+                        userId: user.id,
+                        title: title,
+                    }
+                });
+                historyId = newHistory.id;
+            }
+        }
+
+        // Save User Message
+        const lastUserMsg = messages[messages.length - 1];
+        if (lastUserMsg.role === 'user' && historyId) {
+            await prisma.chatMessage.create({
+                data: {
+                    chatId: historyId,
+                    role: 'user',
+                    content: lastUserMsg.content
+                }
+            });
+        }
+
+        // Search Logic
         let searchContext = '';
         if (enableSearch) {
             const searchQuery = extractSearchQuery(messages);
@@ -112,17 +182,17 @@ export async function POST(req: Request) {
         const systemMessage = {
             role: 'system' as const,
             content: `You are a professional nutritionist. Create PERSONALIZED diet plans.
-
-RULES:
-1. When user asks for a diet plan, FIRST ask 4-6 personalization questions
-2. Format your questions as a numbered list
-3. Questions should be relevant to the request type:
-   - Weight plans: age, gender, weight, activity level, diet preference, allergies
-   - Medical plans: age, symptoms, medications, diet preference
-   - Skin plans: age, skin type, water intake, diet preference
-4. After user provides answers, create a detailed personalized plan
-5. Keep responses concise for mobile users
-6. If web information is provided, use it to enhance nutritional accuracy${searchContext}`,
+        
+        RULES:
+        1. When user asks for a diet plan, FIRST ask 4-6 personalization questions
+        2. Format your questions as a numbered list
+        3. Questions should be relevant to the request type:
+           - Weight plans: age, gender, weight, activity level, diet preference, allergies
+           - Medical plans: age, symptoms, medications, diet preference
+           - Skin plans: age, skin type, water intake, diet preference
+        4. After user provides answers, create a detailed personalized plan
+        5. Keep responses concise for mobile users
+        6. If web information is provided, use it to enhance nutritional accuracy${searchContext}`,
         };
 
         // Use Llama 3.1 70B Instruct - powerful and fast
@@ -135,28 +205,37 @@ RULES:
             stream: true,
         });
 
-        // Create a readable stream
+        // Create a readable stream AND accumulate text for saving
         const encoder = new TextEncoder();
+        let fullAiResponse = "";
+
         const stream = new ReadableStream({
             async start(controller) {
                 try {
                     for await (const chunk of response) {
-                        if (!chunk.choices?.length) continue;
-
-                        const delta = chunk.choices[0]?.delta;
-                        const content = delta?.content;
-
+                        const content = chunk.choices[0]?.delta?.content;
                         if (content) {
+                            fullAiResponse += content;
                             controller.enqueue(encoder.encode(`data: ${JSON.stringify({ content })}\n\n`));
                         }
                     }
+
+                    // Save AI Message after stream ends
+                    if (historyId && fullAiResponse) {
+                        await prisma.chatMessage.create({
+                            data: {
+                                chatId: historyId,
+                                role: 'assistant',
+                                content: fullAiResponse
+                            }
+                        });
+                    }
+
                     controller.enqueue(encoder.encode('data: [DONE]\n\n'));
                     controller.close();
                 } catch (error) {
-                    console.error('Stream error:', error);
-                    controller.enqueue(encoder.encode(`data: ${JSON.stringify({ content: '⚠️ Error generating response. Please try again.' })}\n\n`));
-                    controller.enqueue(encoder.encode('data: [DONE]\n\n'));
-                    controller.close();
+                    console.error('Stream processing error:', error);
+                    controller.error(error);
                 }
             },
         });
@@ -164,12 +243,13 @@ RULES:
         return new Response(stream, {
             headers: {
                 'Content-Type': 'text/event-stream',
-                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Cache-Control': 'no-cache',
                 'Connection': 'keep-alive',
-                'X-Content-Type-Options': 'nosniff',
+                'X-Chat-Id': historyId || '', // Return Chat ID to client
                 ...RATE_LIMIT_HEADERS,
             },
         });
+
     } catch (error: unknown) {
         console.error('Chat API Error:', error);
 

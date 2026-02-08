@@ -1,0 +1,115 @@
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { signIn } from 'next-auth/react';
+
+export default function RegisterPage() {
+    const router = useRouter();
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+        setError('');
+
+        try {
+            const res = await fetch('/api/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, password }),
+            });
+
+            if (res.ok) {
+                // Auto login after register
+                const loginRes = await signIn('credentials', {
+                    email,
+                    password,
+                    redirect: false,
+                });
+
+                if (loginRes?.ok) {
+                    router.push('/profile');
+                    router.refresh();
+                } else {
+                    router.push('/login');
+                }
+            } else {
+                const data = await res.json();
+                setError(data.error || 'Registration failed');
+                setLoading(false);
+            }
+        } catch (error) {
+            setError('Something went wrong');
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div className="flex flex-col items-center justify-center min-h-[80vh] p-4 bg-retro-bg font-retro">
+            <div className="bg-retro-paper dark:bg-gray-800 border-4 border-black p-8 shadow-retro max-w-md w-full">
+                <h1 className="text-2xl font-bold uppercase mb-6 text-center bg-retro-accent text-black p-2">
+                    📝 NEW_USER_REGISTRATION
+                </h1>
+
+                {error && (
+                    <div className="bg-red-100 border-2 border-red-500 text-red-700 p-2 mb-4 text-center font-bold">
+                        ⚠️ {error}
+                    </div>
+                )}
+
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                        <label className="block text-sm font-bold mb-1">USERNAME</label>
+                        <input
+                            type="text"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            className="w-full border-2 border-black p-2 font-mono"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-bold mb-1">EMAIL_ADDRESS</label>
+                        <input
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="w-full border-2 border-black p-2 font-mono"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-bold mb-1">PASSWORD</label>
+                        <input
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="w-full border-2 border-black p-2 font-mono"
+                            required
+                        />
+                    </div>
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full bg-retro-primary text-white border-2 border-black p-3 font-bold hover:bg-black hover:text-white transition-colors disabled:opacity-50"
+                    >
+                        {loading ? 'CREATING_ACCOUNT...' : 'REGISTER'}
+                    </button>
+                </form>
+
+                <p className="mt-4 text-center text-sm">
+                    ALREADY_HAVE_ACCOUNT?{' '}
+                    <Link href="/login" className="text-retro-accent font-bold hover:underline">
+                        LOGIN_HERE
+                    </Link>
+                </p>
+            </div>
+        </div>
+    );
+}

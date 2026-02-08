@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import DietPlanDisplay from '@/components/DietPlanDisplay';
+import RecipeButton from '@/components/RecipeButton';
+import { useToast } from '@/components/Toast';
 
 interface ActivePlan {
     goal: string;
@@ -23,6 +25,8 @@ interface DayProgress {
     water: number;
     notes: string;
     completed: boolean;
+    mood?: 'happy' | 'tired' | 'energetic' | 'neutral' | null;
+    energy?: number; // 1-5 scale
 }
 
 interface TodoItem {
@@ -33,6 +37,7 @@ interface TodoItem {
 }
 
 export default function TrackerPage() {
+    const { showToast } = useToast();
     const [activePlan, setActivePlan] = useState<ActivePlan | null>(null);
     const [progress, setProgress] = useState<DayProgress[]>([]);
     const [todayProgress, setTodayProgress] = useState({
@@ -47,6 +52,8 @@ export default function TrackerPage() {
     const [todos, setTodos] = useState<TodoItem[]>([]);
     const [newTodo, setNewTodo] = useState('');
     const [showPlanDetails, setShowPlanDetails] = useState(false);
+    const [todayMood, setTodayMood] = useState<'happy' | 'tired' | 'energetic' | 'neutral' | null>(null);
+    const [todayEnergy, setTodayEnergy] = useState<number>(3);
 
     useEffect(() => {
         // Load active plan
@@ -78,6 +85,8 @@ export default function TrackerPage() {
             if (todayEntry) {
                 setTodayProgress(todayEntry.meals);
                 setWaterCount(todayEntry.water || 0);
+                setTodayMood(todayEntry.mood || null);
+                setTodayEnergy(todayEntry.energy || 3);
             }
         }
 
@@ -88,12 +97,15 @@ export default function TrackerPage() {
         }
     }, []);
 
-    const saveProgress = (meals: typeof todayProgress, water: number) => {
+    const saveProgress = (meals: typeof todayProgress, water: number, mood?: typeof todayMood, energy?: number) => {
         const today = new Date().toDateString();
         const allCompleted = meals.breakfast && meals.lunch && meals.dinner;
 
         const updatedProgress = [...progress];
         const todayIndex = updatedProgress.findIndex(p => p.date === today);
+
+        // Preserve existing mood/energy if not provided
+        const existingEntry = todayIndex >= 0 ? updatedProgress[todayIndex] : null;
 
         const dayData: DayProgress = {
             date: today,
@@ -101,6 +113,8 @@ export default function TrackerPage() {
             water,
             notes: '',
             completed: allCompleted,
+            mood: mood !== undefined ? mood : (existingEntry?.mood || null),
+            energy: energy !== undefined ? energy : (existingEntry?.energy || 3),
         };
 
         if (todayIndex >= 0) {
@@ -114,15 +128,43 @@ export default function TrackerPage() {
     };
 
     const toggleMeal = (meal: keyof typeof todayProgress) => {
-        const newProgress = { ...todayProgress, [meal]: !todayProgress[meal] };
+        const wasChecked = todayProgress[meal];
+        const newProgress = { ...todayProgress, [meal]: !wasChecked };
         setTodayProgress(newProgress);
         saveProgress(newProgress, waterCount);
+
+        // Show toast
+        const mealNames = { breakfast: 'Breakfast', lunch: 'Lunch', dinner: 'Dinner', snacks: 'Snacks' };
+        if (!wasChecked) {
+            const completedCount = Object.values(newProgress).filter(Boolean).length;
+            if (completedCount === 4) {
+                showToast('All meals completed! 🎉', 'success', '🏆');
+            } else {
+                showToast(`${mealNames[meal]} logged!`, 'success', '✓');
+            }
+        }
     };
 
     const addWater = () => {
         const newCount = waterCount + 1;
         setWaterCount(newCount);
         saveProgress(todayProgress, newCount);
+
+        if (newCount === 8) {
+            showToast('Hydration goal reached! 💧', 'success', '🎯');
+        } else {
+            showToast(`Glass ${newCount} logged!`, 'info', '💧');
+        }
+    };
+
+    const handleMoodChange = (mood: 'happy' | 'tired' | 'energetic' | 'neutral') => {
+        setTodayMood(mood);
+        saveProgress(todayProgress, waterCount, mood, todayEnergy);
+    };
+
+    const handleEnergyChange = (energy: number) => {
+        setTodayEnergy(energy);
+        saveProgress(todayProgress, waterCount, todayMood, energy);
     };
 
     const getDaysActive = () => {
@@ -275,27 +317,29 @@ export default function TrackerPage() {
                             <h2 className="text-sm font-bold uppercase mb-3 bg-black text-white inline-block px-2 py-1">
                                 TODAY'S MEALS
                             </h2>
-                            <div className="grid grid-cols-4 gap-2">
+                            <div className="grid grid-cols-2 gap-2">
                                 {[
-                                    { key: 'breakfast', icon: '🍳', label: 'BFAST' },
-                                    { key: 'lunch', icon: '🥗', label: 'LUNCH' },
-                                    { key: 'dinner', icon: '🍽️', label: 'DINNER' },
-                                    { key: 'snacks', icon: '🍎', label: 'SNACK' },
+                                    { key: 'breakfast', icon: '🍳', label: 'BREAKFAST', recipe: 'Healthy Breakfast' },
+                                    { key: 'lunch', icon: '🥗', label: 'LUNCH', recipe: 'Healthy Lunch' },
+                                    { key: 'dinner', icon: '🍽️', label: 'DINNER', recipe: 'Healthy Dinner' },
+                                    { key: 'snacks', icon: '🍎', label: 'SNACKS', recipe: 'Healthy Snacks' },
                                 ].map((meal) => (
-                                    <button
-                                        key={meal.key}
-                                        onClick={() => toggleMeal(meal.key as keyof typeof todayProgress)}
-                                        className={`p-2 border-2 border-black flex flex-col items-center transition-all ${todayProgress[meal.key as keyof typeof todayProgress]
-                                            ? 'bg-retro-accent text-black'
-                                            : 'bg-white dark:bg-gray-700 text-black dark:text-white'
-                                            }`}
-                                    >
-                                        <span className="text-lg">{meal.icon}</span>
-                                        <span className="text-xs font-bold">{meal.label}</span>
-                                        {todayProgress[meal.key as keyof typeof todayProgress] && (
-                                            <span className="text-green-600 text-xs">✓</span>
-                                        )}
-                                    </button>
+                                    <div key={meal.key} className="flex gap-1">
+                                        <button
+                                            onClick={() => toggleMeal(meal.key as keyof typeof todayProgress)}
+                                            className={`flex-1 p-2 border-2 border-black flex items-center gap-2 transition-all ${todayProgress[meal.key as keyof typeof todayProgress]
+                                                ? 'bg-retro-accent text-black'
+                                                : 'bg-white dark:bg-gray-700 text-black dark:text-white'
+                                                }`}
+                                        >
+                                            <span className="text-lg">{meal.icon}</span>
+                                            <span className="text-xs font-bold flex-1 text-left">{meal.label}</span>
+                                            {todayProgress[meal.key as keyof typeof todayProgress] && (
+                                                <span className="text-green-600 text-xs">✓</span>
+                                            )}
+                                        </button>
+                                        <RecipeButton foodItem={meal.recipe} dietContext={activePlan?.goal} />
+                                    </div>
                                 ))}
                             </div>
                             <div className="mt-3 flex gap-2">
@@ -311,6 +355,58 @@ export default function TrackerPage() {
                                 >
                                     📋 VIEW PLAN
                                 </button>
+                            </div>
+                        </div>
+
+                        {/* Mood & Energy Tracker */}
+                        <div className="bg-retro-paper dark:bg-gray-800 border-4 border-black dark:border-white/30 p-3 shadow-retro">
+                            <h2 className="text-sm font-bold uppercase mb-3 bg-purple-500 text-white inline-block px-2 py-1">
+                                ⚡ MOOD & ENERGY
+                            </h2>
+
+                            {/* Mood Selection */}
+                            <div className="mb-3">
+                                <p className="text-xs font-mono text-retro-text mb-2">How are you feeling today?</p>
+                                <div className="grid grid-cols-4 gap-2">
+                                    {[
+                                        { key: 'happy', icon: '😊', label: 'Happy' },
+                                        { key: 'energetic', icon: '⚡', label: 'Energetic' },
+                                        { key: 'tired', icon: '😴', label: 'Tired' },
+                                        { key: 'neutral', icon: '😐', label: 'Neutral' },
+                                    ].map((mood) => (
+                                        <button
+                                            key={mood.key}
+                                            onClick={() => handleMoodChange(mood.key as 'happy' | 'tired' | 'energetic' | 'neutral')}
+                                            className={`p-2 border-2 border-black text-center transition-all ${todayMood === mood.key
+                                                ? 'bg-purple-400 text-black shadow-none translate-y-0.5'
+                                                : 'bg-white dark:bg-gray-700 shadow-retro-sm hover:translate-y-0.5 hover:shadow-none'
+                                                }`}
+                                        >
+                                            <span className="text-xl block">{mood.icon}</span>
+                                            <span className="text-[10px] font-bold">{mood.label}</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Energy Level */}
+                            <div>
+                                <p className="text-xs font-mono text-retro-text mb-2">Energy Level: {todayEnergy}/5</p>
+                                <div className="flex gap-1">
+                                    {[1, 2, 3, 4, 5].map((level) => (
+                                        <button
+                                            key={level}
+                                            onClick={() => handleEnergyChange(level)}
+                                            className={`flex-1 h-8 border-2 border-black transition-all ${level <= todayEnergy
+                                                ? 'bg-gradient-to-t from-yellow-400 to-yellow-300'
+                                                : 'bg-gray-200 dark:bg-gray-600'
+                                                }`}
+                                            title={`Energy level ${level}`}
+                                        >
+                                            {level <= todayEnergy && '⚡'}
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
                         </div>
 

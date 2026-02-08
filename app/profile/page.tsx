@@ -1,3 +1,6 @@
+import ChatHistoryList from "@/components/ChatHistoryList";
+import ProgressChart from "@/components/ProgressChart";
+
 export default function ProfilePage() {
     return (
         <div className="min-h-screen bg-retro-bg p-4 pb-24">
@@ -35,13 +38,15 @@ export default function ProfilePage() {
                             <span className="text-xl">💾</span>
                             <span className="text-black dark:text-white">Save favorite diet plans</span>
                         </li>
-                        <li className="flex items-center gap-3 p-2 bg-fitness-light dark:bg-gray-700 border-2 border-black dark:border-white/30">
-                            <span className="text-xl">📊</span>
-                            <span className="text-black dark:text-white">Track your progress</span>
+                        <li className="block p-2 bg-fitness-light dark:bg-gray-700 border-2 border-black dark:border-white/30">
+                            <ProgressChart />
                         </li>
-                        <li className="flex items-center gap-3 p-2 bg-skin-light dark:bg-gray-700 border-2 border-black dark:border-white/30">
-                            <span className="text-xl">💬</span>
-                            <span className="text-black dark:text-white">View chat history</span>
+                        <li className="block p-2 bg-skin-light dark:bg-gray-700 border-2 border-black dark:border-white/30">
+                            <div className="flex items-center gap-3 mb-2">
+                                <span className="text-xl">💬</span>
+                                <span className="text-black dark:text-white font-bold">CHAT_LOGS</span>
+                            </div>
+                            <ChatHistoryList />
                         </li>
                         <li className="flex items-center gap-3 p-2 bg-athletic-light dark:bg-gray-700 border-2 border-black dark:border-white/30">
                             <span className="text-xl">🎯</span>

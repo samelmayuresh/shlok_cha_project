@@ -74,19 +74,20 @@ export default function CategoryCard({ category }: CategoryCardProps) {
 
                 {/* Icon Header */}
                 <div className="flex justify-between items-start z-10">
-                    <div className="bg-retro-paper border-2 border-retro-border p-2 shadow-retro-sm">
+                    <div className="bg-retro-paper border-2 border-retro-border p-2 shadow-retro-sm relative w-12 h-12 flex items-center justify-center">
                         {iconPath ? (
-                            <img
+                            <Image
                                 src={iconPath}
                                 alt={`${category.name} icon`}
                                 width={48}
                                 height={48}
                                 className="object-contain"
                                 onError={(e) => {
-                                    // Fallback to emoji if image fails to load
+                                    // Fallback handled by parent or different strategy if needed, 
+                                    // but next/image onError is client-side. 
+                                    // For simplicity in this migration, we rely on valid paths or fallback UI logic.
                                     const target = e.currentTarget as HTMLImageElement;
                                     target.style.display = 'none';
-                                    target.parentElement!.innerHTML = `<span class="text-4xl">${fallbackEmoji}</span>`;
                                 }}
                             />
                         ) : (

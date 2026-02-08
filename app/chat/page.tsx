@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { DietPlanInline } from '@/components/DietPlanDisplay';
 
 interface Message {
@@ -60,14 +60,44 @@ const isAskingQuestions = (text: string): boolean => {
     );
 };
 
+// ... existing imports
+
 export default function ChatPage() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const urlChatId = searchParams.get('id');
+
+    const [chatId, setChatId] = useState<string | null>(null);
     const [messages, setMessages] = useState<Message[]>([
         {
             role: 'assistant',
             content: "🥗 WELCOME TO AI NUTRITIONIST!\n\nI create PERSONALIZED diet plans for:\n• Weight Loss / Gain\n• Muscle Building\n• Glowing Skin & Beauty\n• Athletic Performance\n• Medical Conditions\n\nWhat kind of diet plan do you need today?",
         },
     ]);
+
+    // Load history if present
+    useEffect(() => {
+        if (urlChatId) {
+            setChatId(urlChatId);
+            setIsLoading(true);
+            fetch(`/api/chat/${urlChatId}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.chat && data.chat.messages) {
+                        const formattedMessages = data.chat.messages.map((m: any) => ({
+                            role: m.role,
+                            content: m.content
+                        }));
+                        setMessages(formattedMessages);
+                    }
+                    setIsLoading(false);
+                })
+                .catch(err => {
+                    console.error('Failed to load chat', err);
+                    setIsLoading(false);
+                });
+        }
+    }, [urlChatId]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -95,10 +125,21 @@ export default function ChatPage() {
             const response = await fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ messages: messagesToSend }),
+                body: JSON.stringify({
+                    messages: messagesToSend,
+                    chatId: chatId
+                }),
             });
 
             if (!response.ok) throw new Error('Failed to connect to AI');
+
+            // Update chat ID from header if new
+            const newChatId = response.headers.get('X-Chat-Id');
+            if (newChatId && !chatId) {
+                setChatId(newChatId);
+                // Optionally update URL without reload
+                window.history.replaceState(null, '', `/chat?id=${newChatId}`);
+            }
 
             const reader = response.body?.getReader();
             const decoder = new TextDecoder();

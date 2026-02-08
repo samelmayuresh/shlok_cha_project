@@ -13,18 +13,23 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-    const [theme, setTheme] = useState<Theme>('light');
+    // Start with undefined to prevent hydration mismatch
+    const [theme, setTheme] = useState<Theme | undefined>(undefined);
 
     useEffect(() => {
-        // Check localStorage for saved theme
+        // Run only on client
         const savedTheme = localStorage.getItem('theme') as Theme;
         if (savedTheme) {
             setTheme(savedTheme);
+        } else {
+            // Default to light if no preference
+            setTheme('light');
         }
     }, []);
 
     useEffect(() => {
-        // Apply theme to document
+        if (!theme) return; // Wait for mount
+
         const root = document.documentElement;
         if (theme === 'dark') {
             root.classList.add('dark');
@@ -43,11 +48,20 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }, [theme]);
 
     const toggleTheme = () => {
-        setTheme(prev => prev === 'light' ? 'dark' : 'light');
+        setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
     };
 
+    // Prevent rendering children until theme is determined to avoid flash
+    // OR render children but avoid theme-dependent UI flicker
+    // For this context, we'll render children but know that 'theme' might be undefined briefly
+    // which is fine as valid default global styles are already applied by globals.css
+
     return (
-        <ThemeContext.Provider value={{ theme, toggleTheme, isDark: theme === 'dark' }}>
+        <ThemeContext.Provider value={{
+            theme: theme || 'light',
+            toggleTheme,
+            isDark: theme === 'dark'
+        }}>
             {children}
         </ThemeContext.Provider>
     );
