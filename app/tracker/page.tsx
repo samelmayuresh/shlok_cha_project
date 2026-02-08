@@ -255,7 +255,7 @@ export default function TrackerPage() {
         <div className="min-h-screen bg-retro-bg p-4 pb-24">
             <div className="max-w-4xl mx-auto space-y-4">
                 {/* Header */}
-                <div className="bg-retro-paper dark:bg-gray-800 border-4 border-black dark:border-white/30 p-3 shadow-retro">
+                <div className="bg-retro-paper dark:bg-gray-800 border-4 border-black dark:border-white/30 p-3 shadow-retro animate-slide-up">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                             <span className="text-2xl">📊</span>
@@ -277,7 +277,7 @@ export default function TrackerPage() {
 
                 {!activePlan ? (
                     /* No Active Plan */
-                    <div className="bg-retro-paper dark:bg-gray-800 border-4 border-dashed border-black dark:border-white/50 p-8 text-center">
+                    <div className="bg-retro-paper dark:bg-gray-800 border-4 border-dashed border-black dark:border-white/50 p-8 text-center animate-bounce-in">
                         <div className="text-5xl mb-3">🎯</div>
                         <h2 className="text-lg font-bold uppercase mb-2 text-retro-text">NO ACTIVE PLAN</h2>
                         <p className="font-mono text-xs text-retro-text mb-4">
@@ -285,7 +285,7 @@ export default function TrackerPage() {
                         </p>
                         <Link
                             href="/chat"
-                            className="inline-block bg-retro-primary text-white border-2 border-black px-4 py-2 font-bold uppercase hover:bg-black transition-colors text-sm"
+                            className="inline-block bg-retro-primary text-white border-2 border-black px-4 py-2 font-bold uppercase hover:bg-black transition-colors text-sm hover-lift"
                         >
                             💬 CREATE PLAN
                         </Link>
@@ -294,26 +294,25 @@ export default function TrackerPage() {
                     <>
                         {/* Stats Row */}
                         <div className="grid grid-cols-4 gap-2">
-                            <div className="bg-retro-accent border-2 border-black p-2 text-center">
-                                <div className="text-xl font-bold text-black">{getDaysActive()}</div>
-                                <div className="text-xs font-mono text-black">DAYS</div>
-                            </div>
-                            <div className="bg-medical-light border-2 border-black p-2 text-center">
-                                <div className="text-xl font-bold text-black">{streak}🔥</div>
-                                <div className="text-xs font-mono text-black">STREAK</div>
-                            </div>
-                            <div className="bg-fitness-light border-2 border-black p-2 text-center">
-                                <div className="text-xl font-bold text-black">{getCompletionPercent()}%</div>
-                                <div className="text-xs font-mono text-black">TODAY</div>
-                            </div>
-                            <div className="bg-athletic-light border-2 border-black p-2 text-center">
-                                <div className="text-xl font-bold text-black">{waterCount}💧</div>
-                                <div className="text-xs font-mono text-black">WATER</div>
-                            </div>
+                            {[
+                                { value: getDaysActive(), label: 'DAYS', bg: 'bg-retro-accent', delay: 0.1 },
+                                { value: `${streak}🔥`, label: 'STREAK', bg: 'bg-medical-light', delay: 0.15 },
+                                { value: `${getCompletionPercent()}%`, label: 'TODAY', bg: 'bg-fitness-light', delay: 0.2 },
+                                { value: `${waterCount}💧`, label: 'WATER', bg: 'bg-athletic-light', delay: 0.25 },
+                            ].map((stat) => (
+                                <div
+                                    key={stat.label}
+                                    className={`${stat.bg} border-2 border-black p-2 text-center animate-scale-in`}
+                                    style={{ animationDelay: `${stat.delay}s`, opacity: 0, animationFillMode: 'forwards' }}
+                                >
+                                    <div className="text-xl font-bold text-black">{stat.value}</div>
+                                    <div className="text-xs font-mono text-black">{stat.label}</div>
+                                </div>
+                            ))}
                         </div>
 
                         {/* Today's Meals */}
-                        <div className="bg-retro-paper dark:bg-gray-800 border-4 border-black dark:border-white/30 p-3 shadow-retro">
+                        <div className="bg-retro-paper dark:bg-gray-800 border-4 border-black dark:border-white/30 p-3 shadow-retro animate-slide-up" style={{ animationDelay: '0.2s' }}>
                             <h2 className="text-sm font-bold uppercase mb-3 bg-black text-white inline-block px-2 py-1">
                                 TODAY'S MEALS
                             </h2>
